@@ -278,7 +278,7 @@ const generate = (content, filePath, signature) => {
 
 app.options("/", cors());
 app.get('/', (req, res) => {
-  res.status(200).json('Welcome, your app is working well');
+  res.send('Welcome, your app is working well..');
 })
 
 // Add logging middleware
