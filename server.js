@@ -276,6 +276,10 @@ const generate = (content, filePath, signature) => {
   doc.end();
 };
 
+app.get('/', (req, res) => {
+  res.status(200).json('Welcome, your app is working well');
+})
+
 // Add logging middleware
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
