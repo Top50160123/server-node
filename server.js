@@ -276,6 +276,7 @@ const generate = (content, filePath, signature) => {
   doc.end();
 };
 
+app.options("/", cors());
 app.get('/', (req, res) => {
   res.status(200).json('Welcome, your app is working well');
 })
