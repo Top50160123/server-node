@@ -5,8 +5,8 @@ const path = require("path");
 const cors = require("cors");
 const crypto = require("crypto");
 
-const axios = require('axios');
-const querystring = require('querystring');
+const axios = require("axios");
+const querystring = require("querystring");
 
 const speakeasy = require("speakeasy");
 const bodyParser = require("body-parser");
@@ -34,9 +34,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.options("/api/generate-pdf", cors());
-app.post("/api/generate-pdf", (req, res) => {
-  console.log("generate-pdf, your app is working well");
+app.options("/generate-pdf", cors());
+app.post("/generate-pdf", (req, res) => {
+  res.send("generate-pdf, your app is working well");
   const { userInput, fileName } = req.body;
   const filePath = path.join(__dirname, `${fileName}.pdf`);
   generatePDF(userInput, filePath, res);
@@ -64,15 +64,16 @@ function generatePDF(userInput, filePath, res) {
   doc.pipe(fs.createWriteStream(filePath));
   doc.text(userInput);
   doc.end();
-  
-  doc.on('finish', () => {
+
+  doc.on("finish", () => {
+    console.log("Success: PDF generated");
     const fileUrl = `https://final-project-eta-ruby.vercel.app/api/export-pdf?fileName=${encodeURIComponent(
       path.basename(filePath)
     )}`;
     res.json({ success: true, fileUrl });
   });
 
-  doc.on('error', (error) => {
+  doc.on("error", (error) => {
     console.error("Error generating PDF:", error);
     res.status(500).json({ success: false, error: "PDF generation failed" });
   });
@@ -226,7 +227,7 @@ function generatePDF(userInput, filePath, res) {
 //   }
 // });
 
-// // -------------------------------------------------------------------------------------------------- CMU 
+// // -------------------------------------------------------------------------------------------------- CMU
 // app.options("/getToken/:code", cors());
 // app.post('/getToken/:code', async (req, res) => {
 //   try {
@@ -293,9 +294,9 @@ function generatePDF(userInput, filePath, res) {
 // };
 
 app.options("/", cors());
-app.get('/', (req, res) => {
-  res.send('Welcome, your app is working well');
-})
+app.get("/", (req, res) => {
+  res.send("Welcome, your app is working well");
+});
 
 // Add logging middleware
 app.use((req, res, next) => {
@@ -308,4 +309,4 @@ app.listen(port, () => {
 });
 
 // Export the Express API
-module.exports = app
+module.exports = app;
