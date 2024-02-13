@@ -304,7 +304,7 @@ app.use((req, res, next) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on https://final-project-eta-ruby.vercel.app/`);
+  console.log(`Server is running on `);
 });
 
 // Export the Express API
