@@ -34,49 +34,49 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.options("/api/generate-pdf", cors());
-// app.post("/api/generate-pdf", (req, res) => {
-//   console.log("generate-pdf, your app is working well");
-//   const { userInput, fileName } = req.body;
-//   const filePath = path.join(__dirname, `${fileName}.pdf`);
-//   generatePDF(userInput, filePath, res);
-// });
+app.options("/api/generate-pdf", cors());
+app.post("/api/generate-pdf", (req, res) => {
+  console.log("generate-pdf, your app is working well");
+  const { userInput, fileName } = req.body;
+  const filePath = path.join(__dirname, `${fileName}.pdf`);
+  generatePDF(userInput, filePath, res);
+});
 
-// app.options("/api/export-pdf", cors());
-// app.get("/api/export-pdf", (req, res) => {
-//   console.log("generate-pdf, your app is working well");
-//   const { fileName } = req.query;
-//   const filePath = path.join(__dirname, `${fileName}.pdf`);
+app.options("/api/export-pdf", cors());
+app.get("/api/export-pdf", (req, res) => {
+  console.log("generate-pdf, your app is working well");
+  const { fileName } = req.query;
+  const filePath = path.join(__dirname, `${fileName}.pdf`);
 
-//   try {
-//     const stat = fs.statSync(filePath);
-//     res.setHeader("Content-Length", stat.size);
-//     res.setHeader("Content-Type", "application/pdf");
-//     res.download(filePath, `${fileName}.pdf`);
-//   } catch (error) {
-//     console.error("Error exporting PDF:", error);
-//     res.status(404).json({ success: false, error: "PDF file not found" });
-//   }
-// });
+  try {
+    const stat = fs.statSync(filePath);
+    res.setHeader("Content-Length", stat.size);
+    res.setHeader("Content-Type", "application/pdf");
+    res.download(filePath, `${fileName}.pdf`);
+  } catch (error) {
+    console.error("Error exporting PDF:", error);
+    res.status(404).json({ success: false, error: "PDF file not found" });
+  }
+});
 
-// function generatePDF(userInput, filePath, res) {
-//   const doc = new PDFDocument();
-//   doc.pipe(fs.createWriteStream(filePath));
-//   doc.text(userInput);
-//   doc.end();
+function generatePDF(userInput, filePath, res) {
+  const doc = new PDFDocument();
+  doc.pipe(fs.createWriteStream(filePath));
+  doc.text(userInput);
+  doc.end();
   
-//   doc.on('finish', () => {
-//     const fileUrl = `https://final-project-eta-ruby.vercel.app/api/export-pdf?fileName=${encodeURIComponent(
-//       path.basename(filePath)
-//     )}`;
-//     res.json({ success: true, fileUrl });
-//   });
+  doc.on('finish', () => {
+    const fileUrl = `https://final-project-eta-ruby.vercel.app/api/export-pdf?fileName=${encodeURIComponent(
+      path.basename(filePath)
+    )}`;
+    res.json({ success: true, fileUrl });
+  });
 
-//   doc.on('error', (error) => {
-//     console.error("Error generating PDF:", error);
-//     res.status(500).json({ success: false, error: "PDF generation failed" });
-//   });
-// }
+  doc.on('error', (error) => {
+    console.error("Error generating PDF:", error);
+    res.status(500).json({ success: false, error: "PDF generation failed" });
+  });
+}
 
 // -------------------------------------------------------------------------------------------------- Sign PDF
 // function generateKeyPair() {
