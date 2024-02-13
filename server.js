@@ -37,9 +37,9 @@ app.use((req, res, next) => {
 app.options("/api/generate-pdf", cors());
 app.post("/api/generate-pdf", (req, res) => {
   console.log("generate-pdf, your app is working well");
-  // const { userInput, fileName } = req.body;
-  // const filePath = path.join(__dirname, `${fileName}.pdf`);
-  // generatePDF(userInput, filePath, res);
+  const { userInput, fileName } = req.body;
+  const filePath = path.join(__dirname, `${fileName}.pdf`);
+  generatePDF(userInput, filePath, res);
 });
 
 app.options("/api/export-pdf", cors());
