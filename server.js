@@ -36,11 +36,12 @@ app.use((req, res, next) => {
 
 app.options("/api/generate-pdf", cors());
 app.post("/api/generate-pdf", (req, res) => {
+  res.send('generate-pdf, your app is working well');
   const { userInput, fileName } = req.body;
   const filePath = path.join(__dirname, `${fileName}.pdf`);
   generatePDF(userInput, filePath);
 
-  const fileUrl = `http://localhost:${port}/api/export-pdf?fileName=${encodeURIComponent(
+  const fileUrl = `https://final-project-eta-ruby.vercel.app/api/export-pdf?fileName=${encodeURIComponent(
     fileName
   )}`;
   res.json({ success: true, fileUrl });
@@ -48,6 +49,7 @@ app.post("/api/generate-pdf", (req, res) => {
 
 app.options("/api/export-pdf", cors());
 app.get("/api/export-pdf", (req, res) => {
+  res.send('generate-pdf, your app is working well');
   const { fileName } = req.query;
   const filePath = path.join(__dirname, `${fileName}.pdf`);
 
@@ -113,7 +115,7 @@ app.post("/api/sign-pdf", (req, res) => {
     verifyDigitalSignature(publicKey, content, signature);
 
     generate(content, filePath, "Signature");
-    const fileUrl = `http://localhost:${port}/api/export-sign-pdf?fileName=${encodeURIComponent(
+    const fileUrl = `https://final-project-eta-ruby.vercel.app/api/export-sign-pdf?fileName=${encodeURIComponent(
       fileName
     )}`;
     res.status(200).json({
@@ -288,7 +290,7 @@ app.use((req, res, next) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on https://final-project-eta-ruby.vercel.app/`);
 });
 
 // Export the Express API
