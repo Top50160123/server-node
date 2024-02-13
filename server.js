@@ -44,6 +44,7 @@ app.post("/api/generate-pdf", (req, res) => {
 
 app.options("/api/export-pdf", cors());
 app.get("/api/export-pdf", (req, res) => {
+  console.log("generate-pdf, your app is working well");
   const { fileName } = req.query;
   const filePath = path.join(__dirname, `${fileName}.pdf`);
 
