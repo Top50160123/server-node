@@ -36,10 +36,11 @@ app.use((req, res, next) => {
 
 app.options("/generate-pdf", cors());
 app.post("/generate-pdf", (req, res) => {
-  res.json({ message: "generate-pdf, your app is working well" });
+  // res.json({ message: "generate-pdf, your app is working well" });
   const { userInput, fileName } = req.body;
-  res.json({ Input: "userInput:", userInput });
-  res.json({ Name: "fileName:", fileName });
+  // res.json({ Input: "userInput:", userInput });
+  // res.json({ Name: "fileName:", fileName });
+  console.log("userInput:", userInput);
   const filePath = path.join(__dirname, `${fileName}.pdf`);
   generatePDF(userInput, filePath, res);
 });
