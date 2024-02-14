@@ -36,8 +36,7 @@ app.use((req, res, next) => {
 
 app.options("/generate-pdf", cors());
 app.post("/generate-pdf", (req, res) => {
-  res.send("generate-pdf, your app is working well");
-  const { userInput, fileName } = req.body;
+  res.json({ message: "generate-pdf, your app is working well" });  const { userInput, fileName } = req.body;
   res.send("userInput:",userInput);
   res.send("fileName:",fileName);
   // const filePath = path.join(__dirname, `${fileName}.pdf`);
