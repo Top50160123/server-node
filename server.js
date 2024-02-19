@@ -20,6 +20,7 @@ const bucket = admin.storage().bucket();
 const randomBytes = crypto.randomBytes(32);
 const yourSecretKey = randomBytes.toString("hex");
 
+app.options("/api/get-secret-key", cors());
 app.get("/api/get-secret-key", (req, res) => {
   res.json({ secretKey: yourSecretKey });
 });
@@ -98,6 +99,7 @@ app.post("/getToken/:code", async (req, res) => {
   }
 });
 
+app.options("/generate-pdf", cors());
 app.post("/generate-pdf", async (req, res) => {
   try {
     const { userInput, fileName } = req.body;
@@ -142,6 +144,11 @@ app.delete("/api/delete-pdf/:fileName", async (req, res) => {
     console.error("Error deleting PDF:", error);
     res.status(500).json({ error: "An error occurred while deleting the PDF" });
   }
+});
+
+app.options("/", cors());
+app.get("/", (req, res) => {
+  res.send("Node start");
 });
 
 app.listen(5004, () => console.log("Server listening on port 5004"));
