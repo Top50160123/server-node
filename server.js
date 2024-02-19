@@ -3,8 +3,9 @@ const { PDFDocument } = require("pdf-lib");
 const cors = require("cors");
 const admin = require("firebase-admin");
 const serviceAccount = require("./firebase.json");
-// const QRCode = require('qrcode');
-// const speakeasy = require('speakeasy');
+const speakeasy = require('speakeasy');
+const QRCode = require('qrcode');
+const crypto = require("crypto");
 
 const app = express();
 app.use(cors());
@@ -15,6 +16,33 @@ admin.initializeApp({
   storageBucket: "final-auth-project.appspot.com",
 });
 const bucket = admin.storage().bucket();
+
+const randomBytes = crypto.randomBytes(32);
+const yourSecretKey = randomBytes.toString("hex");
+
+app.get("/api/get-secret-key", (req, res) => {
+  res.json({ secretKey: yourSecretKey });
+});
+
+app.options("/api/generate-otp-and-qrcode", cors());
+app.post("/api/generate-otp-and-qrcode", async (req, res) => {
+  try {
+    const secret = speakeasy.generateSecret({
+      name: "OTP Zero-Trust : project",
+    });
+    const otpauth_url = secret.otpauth_url;
+    const qrCodeDataURL = await QRCode.toDataURL(otpauth_url);
+
+    res.json({
+      secret: secret.base32,
+      otpauth_url,
+      qrcode: qrCodeDataURL,
+    });
+  } catch (error) {
+    console.error("Error generating QR code:", error);
+    res.status(500).json({ error: "Error generating QR code" });
+  }
+});
 
 app.options("/api/verify-otp", cors());
 app.post("/api/verify-otp", (req, res) => {
