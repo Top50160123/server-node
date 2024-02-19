@@ -6,6 +6,8 @@ const serviceAccount = require("./firebase.json");
 const speakeasy = require('speakeasy');
 const QRCode = require('qrcode');
 const crypto = require("crypto");
+const axios = require('axios');
+const querystring = require('querystring');
 
 const app = express();
 app.use(cors());
@@ -73,9 +75,9 @@ app.post("/getToken/:code", async (req, res) => {
     const codeFromURL = req.params.code;
     const requestData = {
       code: codeFromURL,
-      redirect_uri: "https://final-project-eta-ruby.vercel.app/callback",
-      client_id: "dBH4CNbDdruZ8qyD3qqubEYdVz5xvpnqsDe7yrQb",
-      client_secret: "tYEyZQnjDzQ11j8JQDjdTQh0deHEkAfNKnaqaArf",
+      redirect_uri: "YOUR_REDIRECT_URI_HERE",
+      client_id: "YOUR_CLIENT_ID_HERE",
+      client_secret: "YOUR_CLIENT_SECRET_HERE",
       grant_type: "authorization_code",
     };
 
@@ -86,7 +88,7 @@ app.post("/getToken/:code", async (req, res) => {
     };
 
     const response = await axios.post(
-      "https://oauth.cmu.ac.th/v1/GetToken.aspx",
+      "YOUR_EXTERNAL_API_URL_HERE",
       querystring.stringify(requestData),
       { headers }
     );
@@ -151,4 +153,5 @@ app.get("/", (req, res) => {
   res.send("Node start");
 });
 
-app.listen(5004, () => console.log("Server listening on port 5004"));
+const PORT = process.env.PORT || 5004;
+app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
