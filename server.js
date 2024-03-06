@@ -146,4 +146,8 @@ app.delete("/api/delete-pdf/:fileName", async (req, res) => {
   }
 });
 
+app.get("/", (req, res) => {
+  res.send("Welcome, your app is working well");
+});
+
 app.listen(5004, () => console.log("Server listening on port 5004"));
