@@ -56,6 +56,38 @@ app.post("/generate-pdf", async (req, res) => {
   }
 });
 
+// api CMU
+app.post("/getToken/:code", async (req, res) => {
+  try {
+    const codeFromURL = req.params.code;
+    const requestData = {
+      code: codeFromURL,
+      redirect_uri: "https://final-project-eta-ruby.vercel.app/callback",
+      client_id: "dBH4CNbDdruZ8qyD3qqubEYdVz5xvpnqsDe7yrQb",
+      client_secret: "tYEyZQnjDzQ11j8JQDjdTQh0deHEkAfNKnaqaArf",
+      grant_type: "authorization_code",
+    };
+
+    console.log("codeFromURL:", codeFromURL);
+
+    const headers = {
+      "Content-Type": "application/x-www-form-urlencoded",
+    };
+
+    const response = await axios.post(
+      "https://oauth.cmu.ac.th/v1/GetToken.aspx",
+      querystring.stringify(requestData),
+      { headers }
+    );
+
+    console.log("Response:", response.data);
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 app.listen(5004, () => console.log("Server ready on port 3000."));
 
 module.exports = app;
