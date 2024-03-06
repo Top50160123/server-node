@@ -151,3 +151,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(5004, () => console.log("Server listening on port 5004"));
+
+module.exports = app;
