@@ -2,7 +2,6 @@ const express = require("express");
 const { PDFDocument } = require("pdf-lib");
 const cors = require("cors");
 const admin = require("firebase-admin");
-const serviceAccount = require("./firebase.json");
 const speakeasy = require('speakeasy');
 const QRCode = require('qrcode');
 const crypto = require("crypto");
@@ -11,6 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const serviceAccount = require("./firebase.json");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   storageBucket: "final-auth-project.appspot.com",
@@ -146,4 +146,10 @@ app.delete("/api/delete-pdf/:fileName", async (req, res) => {
   }
 });
 
+app.get("/", (req, res) => {
+  res.send("Welcome, your app is working well");
+});
+
 app.listen(5004, () => console.log("Server listening on port 5004"));
+
+module.exports = app;
