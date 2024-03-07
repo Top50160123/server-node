@@ -2,11 +2,11 @@ const express = require("express");
 const { PDFDocument } = require("pdf-lib");
 const cors = require("cors");
 const admin = require("firebase-admin");
-const speakeasy = require('speakeasy');
-const QRCode = require('qrcode');
+const speakeasy = require("speakeasy");
+const QRCode = require("qrcode");
 const crypto = require("crypto");
 const axios = require("axios");
-const querystring = require('querystring');
+const querystring = require("querystring");
 
 const app = express();
 app.use(cors());
@@ -22,6 +22,15 @@ const bucket = admin.storage().bucket();
 
 // api /
 app.get("/", (req, res) => res.send("Express on Vercel"));
+
+// random key
+const randomBytes = crypto.randomBytes(32);
+const yourSecretKey = randomBytes.toString("hex");
+
+app.options("/api/get-secret-key", cors());
+app.get("/api/get-secret-key", (req, res) => {
+  res.json({ secretKey: yourSecretKey });
+});
 
 // api create pdf
 app.options("/generate-pdf", cors());
@@ -58,10 +67,20 @@ app.post("/generate-pdf", async (req, res) => {
   }
 });
 
+// api delete PDF
+app.delete("/api/delete-pdf/:fileName", async (req, res) => {
+  try {
+    const fileName = req.params.fileName;
+    console.log(`${fileName}.pdf`);
+    await bucket.file(`${fileName}.pdf`).delete();
+    res.status(200).json({ message: "PDF deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting PDF:", error);
+    res.status(500).json({ error: "An error occurred while deleting the PDF" });
+  }
+});
+
 // api CMU
-
-app.get("/getToken", (req, res) => res.send("OK"));
-
 app.post("/getToken/:code", async (req, res) => {
   try {
     const codeFromURL = req.params.code;
@@ -90,6 +109,48 @@ app.post("/getToken/:code", async (req, res) => {
   } catch (error) {
     console.error("Error:", error.message);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+// api generate qr
+app.post("/api/generate-otp-and-qrcode", async (req, res) => {
+  try {
+    const secret = speakeasy.generateSecret({
+      name: "OTP Zero-Trust : project",
+    });
+    const otpauth_url = secret.otpauth_url;
+    const qrCodeDataURL = await QRCode.toDataURL(otpauth_url);
+
+    res.json({
+      secret: secret.base32,
+      otpauth_url,
+      qrcode: qrCodeDataURL,
+    });
+  } catch (error) {
+    console.error("Error generating QR code:", error);
+    res.status(500).json({ error: "Error generating QR code" });
+  }
+});
+
+//api verify qr
+app.post("/api/verify-otp", (req, res) => {
+  try {
+    const { otp, secret } = req.body;
+    const isValid = speakeasy.totp.verify({
+      secret,
+      encoding: "base32",
+      token: otp,
+      window: 2,
+    });
+
+    if (isValid) {
+      res.json({ message: "OTP is valid" });
+    } else {
+      res.status(401).json({ error: "Invalid OTP" });
+    }
+  } catch (error) {
+    console.error("Error verifying OTP:", error);
+    res.status(500).json({ error: "Error verifying OTP" });
   }
 });
 
