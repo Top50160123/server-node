@@ -113,18 +113,27 @@ app.post("/getToken/:code", async (req, res) => {
 });
 
 // api generate qr
+
+app.options("/api/generate-otp-and-qrcode", cors());
 app.post("/api/generate-otp-and-qrcode", async (req, res) => {
   try {
     const secret = speakeasy.generateSecret({
       name: "OTP Zero-Trust : project",
     });
+
     const otpauth_url = secret.otpauth_url;
     const qrCodeDataURL = await QRCode.toDataURL(otpauth_url);
+
+    const token = speakeasy.totp({
+      secret: secret.base32,
+      encoding: "base32",
+    });
 
     res.json({
       secret: secret.base32,
       otpauth_url,
       qrcode: qrCodeDataURL,
+      token: token,
     });
   } catch (error) {
     console.error("Error generating QR code:", error);
@@ -133,20 +142,16 @@ app.post("/api/generate-otp-and-qrcode", async (req, res) => {
 });
 
 //api verify qr
-app.post("/api/verify-otp", (req, res) => {
+app.options("/api/verify-otp", cors());
+app.post("/api/verify-otp", async (req, res) => {
   try {
-    const { otp, secret } = req.body;
-    const isValid = speakeasy.totp.verify({
-      secret,
-      encoding: "base32",
-      token: otp,
-      window: 2,
-    });
-
-    if (isValid) {
-      res.json({ message: "OTP is valid" });
-    } else {
-      res.status(401).json({ error: "Invalid OTP" });
+    const { otp, secret, token } = req.body;
+    if (secret) {
+      if (token == otp) {
+        res.json({ valid: true });
+      } else {
+        res.json({ valid: false });
+      }
     }
   } catch (error) {
     console.error("Error verifying OTP:", error);
